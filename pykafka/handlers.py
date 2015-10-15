@@ -24,6 +24,7 @@ import logging
 import threading
 import weakref
 
+from .exceptions import SocketDisconnectedError
 from .utils.compat import Queue, Empty
 
 log = logging.getLogger(__name__)
@@ -147,6 +148,11 @@ class RequestHandler(object):
                         if task.future:
                             res = self.connection.response()
                             task.future.set_response(res)
+                    except SocketDisconnectedError as e:
+                        # reconnect
+                        self.connection.reconnect()
+                        if task.future:
+                            task.future.set_error(e)
                     except Exception as e:
                         if task.future:
                             task.future.set_error(e)

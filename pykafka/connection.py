@@ -73,7 +73,7 @@ class BrokerConnection(object):
         """Returns true if the socket connection is open."""
         return self._socket is not None
 
-    def connect(self, timeout):
+    def connect(self, timeout=10 * 1000):
         """Connect to the broker."""
         log.debug("Connecting to %s:%s", self.host, self.port)
         self._socket = socket.create_connection(
